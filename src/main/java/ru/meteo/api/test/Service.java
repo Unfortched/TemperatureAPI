@@ -36,19 +36,20 @@ public class Service {
 
         List<String> cities = getCitiesNames();
 
+        Map<Long, String> infoMap = getDataByTimestamp(city, date.getTime());
+
         boolean errorPresence = !cities.contains(city) &&
                 cities.stream()
                         .map(p -> p.split("/")[0])
                         .noneMatch(x -> x.equalsIgnoreCase(city));
 
-        if (errorPresence) {
+        if (errorPresence || infoMap == null) {
             JsonObject error = new JsonObject();
             error.put("code", "404");
             error.put("info", "Selected city not configured");
             return error;
         }
 
-        Map<Long, String> infoMap = getDataByTimestamp(city, date.getTime());
 
         JsonObject result = new JsonObject();
         result.put("city", city);
@@ -95,20 +96,27 @@ public class Service {
     }
 
     public Map<Long, String> getDataByTimestamp(String city, Long timestamp) {
-        Long plusDay = 86400000L;
 
-        if (timestamp > 0) {
+        try {
+            Long plusDay = 86400000L;
 
-            return mapDB.getCache().entrySet().stream()
-                    .filter(entry -> entry.getKey() >= timestamp && entry.getKey() <= timestamp + plusDay
-                            && (entry.getValue().startsWith(city) || entry.getValue().equalsIgnoreCase(city)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            if (timestamp > 0) {
+
+                return mapDB.getCache().entrySet().stream()
+                        .filter(entry -> entry.getKey() >= timestamp && entry.getKey() <= timestamp + plusDay
+                                && (entry.getValue().startsWith(city) || entry.getValue().equalsIgnoreCase(city)))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+
+            Map.Entry<Long, String> lastData = mapDB.getCache().entrySet().stream()
+                    .filter(entry -> entry.getValue().contains(city))
+                    .max(Map.Entry.comparingByKey()).get();
+            return Collections.singletonMap(lastData.getKey(), lastData.getValue());
+
+        } catch (Exception e) {
+            //log.error("error", e);
+            return null;
         }
-
-        Map.Entry<Long, String> lastData = mapDB.getCache().entrySet().stream()
-                .filter(entry -> entry.getValue().contains(city))
-                .max(Map.Entry.comparingByKey()).get();
-        return Collections.singletonMap(lastData.getKey(), lastData.getValue());
     }
 
     private List<MeteoData> getCurrentMeteodata() {

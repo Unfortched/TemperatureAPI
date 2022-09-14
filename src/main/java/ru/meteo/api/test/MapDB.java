@@ -43,8 +43,6 @@ public class MapDB {
 
         cache = db.hashMap("cache", Serializer.LONG, Serializer.STRING)
                 .counterEnable()
-                .expireAfterCreate(5, TimeUnit.MINUTES)
-                .expireAfterUpdate(5, TimeUnit.MINUTES)
                 .expireExecutor(new ScheduledThreadPoolExecutor(1))
                 .createOrOpen();
         commit();
