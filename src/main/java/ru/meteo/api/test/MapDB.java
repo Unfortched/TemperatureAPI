@@ -51,6 +51,13 @@ public class MapDB {
 
     @PostConstruct
     public void uploadCities() {
+
+        if(configCities.isEmpty() || configCities.contains(",,")){
+            log.error("Config cities string is empty or it have empty city/country value");
+            System.exit(-1);
+        }
+
+
         List<String> cities = Arrays.asList(configCities.split(","));
 
         for (String city : cities) {
