@@ -7,14 +7,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Value;
-
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * PS. Мало тестов с Mockito, так как фантазии перестает хватать в рабочее и вечернее время :)
- */
 
 @ExtendWith(MockitoExtension.class)
 public class ServiceTest {
