@@ -26,7 +26,7 @@ public class Controller {
     @ResponseBody
     public ResponseEntity getInfo(@RequestBody Entity entity) {
 
-        if(service.checkId(entity)) {
+        if(service.checkId(entity) && entity.getAdd() != null && entity.getId() != null) {
             return new ResponseEntity(new JsonObject(service.updateCurrent(entity)).encodePrettily(), HttpStatus.OK);
         }
         else return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
