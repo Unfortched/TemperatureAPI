@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @Slf4j
-@EnableScheduling
 public class Service {
 
     @Autowired
